@@ -1,4 +1,4 @@
-package com.aravind.pepultask.ui.home
+package com.aravind.pepultask.ui.post
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -10,6 +10,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
+import android.os.Bundle
 import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
@@ -18,8 +19,8 @@ import com.aravind.pepultask.data.model.Post
 import com.aravind.pepultask.databinding.FragmentPostBinding
 import com.aravind.pepultask.di.component.FragmentComponent
 import com.aravind.pepultask.ui.base.BaseFragment
-import com.aravind.pepultask.ui.main.MainSharedViewModel
 import com.aravind.pepultask.utils.common.Constants
+import com.bumptech.glide.Glide
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
@@ -32,15 +33,29 @@ class PostFragment : BaseFragment<PostViewModel>() {
     private lateinit var exoplayer: SimpleExoPlayer
     private lateinit var playerNotificationManager: PlayerNotificationManager
 
+    private lateinit var id: String
+    private lateinit var file: String
+    private lateinit var type: String
+
+
     companion object {
-        const val TAG = "HomeFragment"
+        const val TAG = "PostFragment"
+        fun newInstance(file: String, type: String, id: String): PostFragment {
+            val args = Bundle()
+            args.putString("file", file)
+            args.putString("type", type)
+            args.putString("id", id)
+            val fragment = PostFragment()
+            fragment.arguments = args
+            return fragment
+        }
     }
 
     // creating a variable for exoplayer
     var exoPlayer: ExoPlayer? = null
 
     @Inject
-    lateinit var mainSharedViewModel: MainSharedViewModel
+    lateinit var mainSharedViewModel: PostViewModel
 
     private var _binding: FragmentPostBinding? = null
 
@@ -54,16 +69,28 @@ class PostFragment : BaseFragment<PostViewModel>() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun setupView(view: View) {
-
         _binding = FragmentPostBinding.bind(view)
-        initializePlayer()
 
+        if (arguments!=null) {
+            id = arguments?.getString("id")!!
+            file = arguments?.getString("file")!!
+            type = arguments?.getString("type")!!
+
+            if (type == "1")
+                initializePlayer()
+            else if (type == "0")
+                initializeImage()
+
+        }
     }
 
-    override fun setupObservers() {
-        super.setupObservers()
-
+    private fun initializeImage() {
+        val glideRequest = Glide
+            .with(binding.image.context)
+            .load(Uri.parse(file))
+        glideRequest.into(binding.image)
     }
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun initializePlayer() {
@@ -88,7 +115,7 @@ class PostFragment : BaseFragment<PostViewModel>() {
     }
 
     private fun createMediaItem(): MediaItem {
-        val mediaUri = Uri.parse("asset:///heart_attack.mp3")
+        val mediaUri = Uri.parse(file)
         return MediaItem.fromUri(mediaUri)
     }
 

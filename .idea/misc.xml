@@ -5,13 +5,19 @@
       <map>
         <entry key="..\:/Android Projects/pepultask/pepul/app/src/main/res/layout/activity_main.xml" value="0.2421875" />
         <entry key="..\:/Android Projects/pepultask/pepul/app/src/main/res/layout/fragment_post.xml" value="0.2421875" />
+        <entry key="..\:/Users/Tovology/AndroidStudioProjects/pepul/app/src/main/res/layout/activity_main.xml" value="0.16077898550724637" />
+        <entry key="..\:/Users/Tovology/AndroidStudioProjects/pepul/app/src/main/res/layout/fragment_post.xml" value="0.21822916666666667" />
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_X" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">
     <option name="id" value="Android" />
+  </component>
+  <component name="UnicodeBrowser">
+    <option name="fontName" value="JetBrains Mono" />
   </component>
 </project>

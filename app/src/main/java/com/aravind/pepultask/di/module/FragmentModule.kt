@@ -2,8 +2,10 @@ package com.aravind.pepultask.di.module
 
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.aravind.pepultask.data.repository.PostRepository
 import com.aravind.pepultask.ui.base.BaseFragment
 import com.aravind.pepultask.ui.main.MainSharedViewModel
+import com.aravind.pepultask.ui.post.PostViewModel
 import com.aravind.pepultask.utils.ViewModelProviderFactory
 import com.aravind.pepultask.utils.network.NetworkHelper
 import com.aravind.pepultask.utils.rx.CoroutineDispatchers
@@ -39,5 +41,15 @@ class FragmentModule(private val fragment: BaseFragment<*>) {
             MainSharedViewModel(coroutineDispatchers, networkHelper)
         }).get(MainSharedViewModel::class.java)
 
+    @Provides
+    fun providePostViewModel(
+        coroutineDispatchers: CoroutineDispatchers,
+        networkHelper: NetworkHelper,
+        postRepository: PostRepository
+    ): PostViewModel = ViewModelProvider(
+        fragment, ViewModelProviderFactory(PostViewModel::class) {
+            PostViewModel(coroutineDispatchers, networkHelper,postRepository
+            )
+        }).get(PostViewModel::class.java)
 
 }

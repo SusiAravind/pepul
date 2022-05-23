@@ -45,7 +45,7 @@ class MainViewModel(
     init {
         _paginator
             .onEach {
-                onFetchHomePostList()
+                onFetchPostList()
             }
             .catch {
                 messageStringId.postValue(Resource.error(R.string.try_again))
@@ -53,7 +53,7 @@ class MainViewModel(
 
     }
 
-    private fun onFetchHomePostList() {
+    private fun onFetchPostList() {
         viewModelScope.launch(coroutineDispatchers.io()) {
 
             try {

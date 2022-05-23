@@ -40,21 +40,6 @@ class PostRepository @Inject constructor(
     }
 
 
-  /*  fun fetchUserPostList(user: User) : Flow<List<Post>> {
-
-        return flow {
-            val api = networkService.doMyPostsCall(user.id,user.accessToken)
-            emit(api.data)
-        }.flowOn(Dispatchers.IO)
-    }
-
-
-    fun deleteUserPost(postId: String, user: User) : Flow<GeneralResponse> {
-        return flow {
-            val api = networkService.doPostDelete(postId,user.id,user.accessToken)
-            emit(api)
-        }.flowOn(Dispatchers.IO)
-    }*/
 
     fun deletePost(postId: String) : Flow<GeneralResponse> {
         return flow {
