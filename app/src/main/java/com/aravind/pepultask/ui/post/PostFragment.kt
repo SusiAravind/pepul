@@ -9,6 +9,7 @@ import android.content.DialogInterface
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.opengl.Visibility
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -19,6 +20,7 @@ import com.aravind.pepultask.data.model.Post
 import com.aravind.pepultask.databinding.FragmentPostBinding
 import com.aravind.pepultask.di.component.FragmentComponent
 import com.aravind.pepultask.ui.base.BaseFragment
+import com.aravind.pepultask.ui.main.MainActivity
 import com.aravind.pepultask.utils.common.Constants
 import com.bumptech.glide.Glide
 import com.google.android.exoplayer2.ExoPlayer
@@ -36,15 +38,17 @@ class PostFragment : BaseFragment<PostViewModel>() {
     private lateinit var id: String
     private lateinit var file: String
     private lateinit var type: String
+    private var pos: Int=0;
 
 
     companion object {
         const val TAG = "PostFragment"
-        fun newInstance(file: String, type: String, id: String): PostFragment {
+        fun newInstance(file: String, type: String, id: String,pos:Int): PostFragment {
             val args = Bundle()
             args.putString("file", file)
             args.putString("type", type)
             args.putString("id", id)
+            args.putInt("pos", pos)
             val fragment = PostFragment()
             fragment.arguments = args
             return fragment
@@ -75,16 +79,20 @@ class PostFragment : BaseFragment<PostViewModel>() {
             id = arguments?.getString("id")!!
             file = arguments?.getString("file")!!
             type = arguments?.getString("type")!!
+            pos = arguments?.getInt("pos")!!
 
             if (type == "1")
                 initializePlayer()
             else if (type == "0")
                 initializeImage()
-
         }
+
+        binding.delete.setOnClickListener(View.OnClickListener {showDialog()  })
+
     }
 
     private fun initializeImage() {
+        binding.image.visibility=View.VISIBLE
         val glideRequest = Glide
             .with(binding.image.context)
             .load(Uri.parse(file))
@@ -94,6 +102,7 @@ class PostFragment : BaseFragment<PostViewModel>() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun initializePlayer() {
+        binding.idExoPlayerVIew.visibility=View.VISIBLE
         // Initialize ExoPlayer
         exoplayer = context?.let {
             SimpleExoPlayer.Builder(it)
@@ -174,7 +183,7 @@ class PostFragment : BaseFragment<PostViewModel>() {
     }
 
 
-    private fun showDialog(post: Post) {
+    private fun showDialog() {
         // Late initialize an alert dialog object
         lateinit var dialog: AlertDialog
 
@@ -192,7 +201,7 @@ class PostFragment : BaseFragment<PostViewModel>() {
         // On click listener for dialog buttons
         val dialogClickListener = DialogInterface.OnClickListener { _, which ->
             when (which) {
-                // DialogInterface.BUTTON_POSITIVE -> viewModel.deleteUserPost(post)
+                 DialogInterface.BUTTON_POSITIVE -> (activity as MainActivity).deletePost(pos)
                 DialogInterface.BUTTON_NEGATIVE -> dialog.dismiss()
             }
         }

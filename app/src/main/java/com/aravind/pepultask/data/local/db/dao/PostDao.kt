@@ -4,6 +4,7 @@ import androidx.room.*
 import com.aravind.pepultask.data.local.db.entity.PostEntity
 import com.aravind.pepultask.data.model.Post
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.toList
 
 
 @Dao
@@ -25,6 +26,8 @@ abstract class PostDao {
         for(item in posts){
             insert(PostEntity(item.id,item.file,item.file_type))
         }
+
     }
+
 
 }

@@ -9,7 +9,10 @@ class MainSharedViewModel(
     networkHelper: NetworkHelper
 ) : BaseViewModel(coroutineDispatchers, networkHelper) {
 
-    override fun onCreate() {}
+    override fun onCreate() {
+
+
+    }
 
 
 

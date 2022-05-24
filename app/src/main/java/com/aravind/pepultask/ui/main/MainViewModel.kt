@@ -1,24 +1,30 @@
 package com.aravind.pepultask.ui.main
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.aravind.pepultask.R
 import com.aravind.pepultask.data.model.Post
+import com.aravind.pepultask.data.remote.NetworkService
+import com.aravind.pepultask.data.remote.Networking
 import com.aravind.pepultask.data.repository.PostRepository
 import com.aravind.pepultask.ui.base.BaseViewModel
 import com.aravind.pepultask.utils.common.Resource
+import com.aravind.pepultask.utils.common.Status
 import com.aravind.pepultask.utils.network.NetworkHelper
 import com.aravind.pepultask.utils.rx.CoroutineDispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import okhttp3.internal.toImmutableList
 
 class MainViewModel(
     coroutineDispatchers: CoroutineDispatchers,
     networkHelper: NetworkHelper,
     private val postRepository: PostRepository,
-    private val allPostList: ArrayList<Post>
+    public val allPostList: ArrayList<Post>
 ) : BaseViewModel(coroutineDispatchers, networkHelper) {
 
 
@@ -57,14 +63,32 @@ class MainViewModel(
         viewModelScope.launch(coroutineDispatchers.io()) {
 
             try {
-                postRepository.fetchPostList(lastFetchId)
+
+                if (networkHelper.isNetworkConnected()) {
+                    viewModelScope.launch(coroutineDispatchers.io()) {
+                        try {
+                            postRepository.fetchDPostList(lastFetchId)
+                                .collect {
+                                    _loading.postValue(false)
+                                    allPostList.addAll(it)
+                                    lastFetchId = allPostList.minByOrNull { post -> post.id }?.id
+                                    _posts.postValue(Resource.success(it))
+                                }
+                        } catch (ex: Exception) {
+                            handleNetworkError(ex)
+                        }
+                    }
+                }
+
+
+               /* postRepository.fetchPostList(lastFetchId)
                     .onStart { _loading.postValue(true) }
                     .collect {
                         _loading.postValue(false)
                         it.data?.let { it1 -> allPostList.addAll(it1.toMutableList()) }
                         lastFetchId = allPostList.minByOrNull { post -> post.id }?.id
                         _posts.postValue(it)
-                    }
+                    }*/
 
             } catch (ex: Exception) {
                 _loading.postValue(false)
@@ -75,11 +99,12 @@ class MainViewModel(
     }
 
     override fun onCreate() {
-        loadMorePosts()
+        //loadMorePosts()
+        onFetchPostList()
     }
 
     private fun loadMorePosts() {
-        _paginator.tryEmit(Pair(lastFetchId,lastFetchId))
+        _paginator.tryEmit(Pair(lastFetchId, lastFetchId))
     }
 
     fun onLoadMore() {
@@ -102,7 +127,7 @@ class MainViewModel(
                 try {
                     postRepository.deletePost(postId = post.id)
                         .collect {
-                            onDeletePost(post)
+                           // onDeletePost(post)
                         }
                 } catch (ex: Exception) {
                     handleNetworkError(ex)

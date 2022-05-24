@@ -21,6 +21,7 @@ class PostViewModel(
     val userPosts : MutableLiveData<List<Post>> = MutableLiveData()
 
     override fun onCreate() {
+
     }
 
 }

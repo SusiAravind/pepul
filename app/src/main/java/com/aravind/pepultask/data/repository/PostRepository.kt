@@ -6,7 +6,6 @@ import com.aravind.pepultask.data.model.Post
 import com.aravind.pepultask.data.remote.NetworkService
 import com.aravind.pepultask.data.remote.response.GeneralResponse
 import com.aravind.pepultask.utils.common.Resource
-import com.aravind.pepultask.utils.log.Logger
 import com.aravind.pepultask.utils.network.NetworkHelper
 import com.aravind.pepultask.utils.network.networkBoundResource
 import kotlinx.coroutines.Dispatchers
@@ -23,8 +22,14 @@ class PostRepository @Inject constructor(
         const val TAG = "PostRepository"
     }
 
-    fun fetchPostList(lastFetchId: String?): Flow<Resource<List<Post>>> {
+      fun fetchDPostList(lastFetchId: String?): Flow<List<Post>>  {
+        return flow {
+            val api = networkService.doHomePostListCall(lastFetchId).data
+            emit(api)
+        }.flowOn(Dispatchers.IO)
 
+    }
+    fun fetchPostList(lastFetchId: String?): Flow<Resource<List<Post>>> {
         return networkBoundResource(
             query = { postDao.getAll().map { processData(it) } },
             fetch = { networkService.doHomePostListCall(lastFetchId)},

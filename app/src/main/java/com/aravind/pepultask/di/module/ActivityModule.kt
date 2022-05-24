@@ -2,6 +2,7 @@ package com.aravind.pepultask.di.module
 
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.aravind.pepultask.data.remote.NetworkService
 import com.aravind.pepultask.data.repository.PostRepository
 import com.aravind.pepultask.ui.base.BaseActivity
 import com.aravind.pepultask.ui.main.MainSharedViewModel
@@ -25,7 +26,7 @@ class ActivityModule(private val activity: BaseActivity<*>) {
         postRepository: PostRepository
     ): MainViewModel = ViewModelProvider(
         activity, ViewModelProviderFactory(MainViewModel::class) {
-            MainViewModel(coroutineDispatchers, networkHelper,postRepository,ArrayList())
+            MainViewModel(coroutineDispatchers, networkHelper, postRepository,ArrayList())
         }).get(MainViewModel::class.java)
 
 
